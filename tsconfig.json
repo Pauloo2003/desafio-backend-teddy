@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "target": "ES2016",                              /* Define a versão do JavaScript que será gerada */
+    "module": "commonjs",                            /* Define o sistema de módulos para CommonJS */
+    "outDir": "./dist",                             /* Diretório de saída para os arquivos JavaScript compilados */
+    "rootDir": "./src",                             /* Diretório raiz dos arquivos de origem */
+    "strict": true,                                /* Habilita todas as opções de verificação estrita */
+    "esModuleInterop": true,                        /* Permite a interoperabilidade entre módulos ES e CommonJS */
+    "forceConsistentCasingInFileNames": true,        /* Garante que as importações respeitem a diferenciação de maiúsculas e minúsculas */
+    "skipLibCheck": true,                           /* Ignora a verificação dos arquivos de declaração de tipo (.d.ts) */
+    "sourceMap": true,                             /* Gera arquivos de mapa de origem */
+    "declaration": true                            /* Gera arquivos de declaração (.d.ts) */
+  },
+  "include": ["src/**/*.ts"],                       /* Inclui todos os arquivos TypeScript no diretório src */
+  "exclude": ["node_modules", "**/*.spec.ts"]       /* Exclui a pasta node_modules e arquivos de teste */
+}
