@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { getUrls, getUrlById, createUrl, updateUrl, deleteUrl } from '../controllers/Url';
-import {authenticateToken} from '../middleware/authMiddleware';
+import {authenticateToken, authenticateTokenGerarUrl} from '../middleware/authMiddleware';
 
 const router = Router();
 
@@ -58,7 +58,7 @@ router.get('/:id', authenticateToken, getUrlById);
  *       201:
  *         description: Url created successfully
  */
-router.post('/', authenticateToken , createUrl);
+router.post('/', authenticateTokenGerarUrl , createUrl);
 
 /**
  * @openapi

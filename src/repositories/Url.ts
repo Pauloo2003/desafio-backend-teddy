@@ -2,10 +2,12 @@ import { Url } from '../models/Url';
 import { Op } from 'sequelize';
 
 export class UrlRepository {
-    async findAll() {
+    async findAll(userId: number | null) {
+        console.log('userId',userId)
         try {
             return await Url.findAll({
                 where: {
+                    userId,
                     deletedAt: {
                         [Op.is]: null
                     }
@@ -48,8 +50,7 @@ export class UrlRepository {
         }
     }
 
-    async update(id: number, data: { originalUrl?: string; clicks?: number }) {
-        console.log('clicks', data.clicks);
+    async update(id: number, data: { originalUrl?: string; clicks?: number , updatedAt: string }) {
         try {
             const result = await Url.update(data, { where: { id } });
             if (result[0] === 0) {
@@ -62,7 +63,7 @@ export class UrlRepository {
         }
     }
 
-    async delete(id: number, deletedAt: string, deletedBy: number) {
+    async delete(id: number, deletedAt: string, deletedBy: number | null) {
         try {
             const urlExists = await Url.findOne({ where: { id } });
             if (!urlExists) {

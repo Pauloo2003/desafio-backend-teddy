@@ -9,8 +9,8 @@ import {Logger} from "sequelize/types/utils/logger";
 moment.tz.setDefault('America/Sao_Paulo');
 const saltRounds = 10;
 export class UrlService {
-    async getUrls() {
-        return urlRepository.findAll();
+    async getUrls(userId: number | null) {
+        return urlRepository.findAll(userId);
     }
 
     async getUrlById(id: number) {
@@ -29,7 +29,8 @@ export class UrlService {
             // Incrementar o contador de cliques
 
             console.log('urlRecord[0]',urlRecord[0])
-            await urlRepository.update(urlRecord[0].id, { clicks: Number(urlRecord[0].clicks + 1) });
+            const  updatedAt : string = moment().format('YYYY-MM-DD HH:mm:ss');
+            await urlRepository.update(urlRecord[0].id, { clicks: Number(urlRecord[0].clicks + 1) ,updatedAt  });
 
             // Redirecionar para a URL original
             return (urlRecord[0].originalUrl);
@@ -39,33 +40,29 @@ export class UrlService {
         }
     }
 
-    async createUrl(data: { urlOriginal: string , userId: number }) {
+    async createUrl(data: { urlOriginal: string , userId: number | null }) {
         const { urlOriginal , userId } = data;
         // Verificar se todos os campos obrigatórios estão presentes
         if (!urlOriginal) {
             throw new Error('Informe a url que deseja ser encurtada.');
         }
-        const existingUrl : any = await urlRepository.findOne({ where: { originalUrl: urlOriginal } });
 
-        if (existingUrl.length > 0) {
-            return `http://localhost:3000/${existingUrl[0].shortUrl}`;
-        }
         const shortUrl: string = await this.generateShortUrl()
 
         // Data para criação e atualização da url
         const createdAt : string = moment().format('YYYY-MM-DD HH:mm:ss');
         const updatedAt : string = moment().format('YYYY-MM-DD HH:mm:ss');
-
-        // Criação do usuário
-        const result = urlRepository.create({
+        const payload = {
             originalUrl: urlOriginal,
             shortUrl,
             clicks: 0,
             createdAt,
             updatedAt,
             userId: userId || null,
-        });
-
+        }
+        // Criação do usuário
+        const result = urlRepository.create(payload);
+        console.log('result criacao de url', result)
         const domain = 'http://localhost:3000'; // Aqui você pode configurar o domínio dinamicamente
         return `${domain}/${shortUrl}`;
     }
@@ -79,14 +76,14 @@ export class UrlService {
         return shortUrl;
     }
 
-    async updateUrl(id: number, data: {  name?: string; email?: string , phone?: string , updatedAt: string; }) {
+    async updateUrl(id: number, data:  {  name?: string; email?: string , phone?: string , updatedAt: string; }) {
         data.updatedAt = moment().format('YYYY-MM-DD HH:mm:ss');
         const [updated] = await urlRepository.update(id, data);
         if (!updated) throw new Error('Url not found');
         return updated;
     }
 
-    async deleteUrl(id: number, userId: number) {
+    async deleteUrl(id: number, userId: number | null) {
         const deletedAt = moment().format('YYYY-MM-DD HH:mm:ss');
         const deleted = await urlRepository.delete(id,deletedAt,userId);
         if (!deleted) throw new Error('Url not found');
