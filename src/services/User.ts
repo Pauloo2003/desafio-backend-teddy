@@ -92,6 +92,7 @@ export class User {
         data.updatedAt = moment().format('YYYY-MM-DD HH:mm:ss');
 
         try {
+            // @ts-ignore
             const [updated] = await userRepository.update(id, data);
             if (!updated) throw new Error('Usuário não encontrado');
             return updated;
