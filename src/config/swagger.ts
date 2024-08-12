@@ -22,8 +22,8 @@ const swaggerSpec = swaggerJsdoc({
             },
         },
         servers: [
+            { url: `https://desafio-backend.up.railway.app`, description: 'Server Produção' },
             { url: `${process.env.URL_DEV}:${process.env.PORT}`, description: 'Server Local' },
-            { url: `https://desafio-backend.up.railway.app`, description: 'Server Produção' }
         ],
         security: [
             {
