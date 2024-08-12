@@ -43,6 +43,10 @@ Crie um arquivo .env na raiz do projeto com base no arquivo de exemplo fornecido
    ```bash
    npm run dev
 
+## Documentação
+
+A documentação da API, gerada com Swagger, está disponível na rota http://localhost:{Porta Definida no Env} Ex: http://localhost:3000/  ou http://localhost:3000/api/api-docs visualizar a documentação localmente.
+A documentação tambem está disponivel no ambiente de produção: (https://desafio-backend.up.railway.app/api/api-docs)
 
 ### Notas:
 
