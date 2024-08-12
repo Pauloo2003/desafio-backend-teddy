@@ -19,11 +19,11 @@ export class UserRepository {
         return User.findByPk(id);
     }
 
-    async create(data: { name: string; email: string , password: string, phone: string }) {
+    async create(data: { name: string; email: string , password: string, phone: string , createdAt: string , updatedAt: string }) {
         return User.create(data);
     }
 
-    async update(id: number, data: { name?: string; email?: string }) {
+    async update(id: number, data: { name?: string; email?: string , phone?: string , updatedAt: string }) {
         return User.update(data, { where: { id } });
     }
 
