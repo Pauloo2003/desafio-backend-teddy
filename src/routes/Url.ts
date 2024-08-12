@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { getUrls, getUrlById, createUrl, updateUrl, deleteUrl } from '../controllers/Url';
-import {authenticateToken, authenticateTokenGerarUrl} from '../middleware/authMiddleware';
+import { authenticateToken, authenticateTokenGerarUrl } from '../middleware/authMiddleware';
 
 const router = Router();
 
@@ -8,12 +8,12 @@ const router = Router();
  * @openapi
  * /api/url:
  *   get:
- *     summary: Get all url
+ *     summary: Get all URLs
  *     security:
  *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: A list of url
+ *         description: A list of URLs
  *       401:
  *         description: Unauthorized, token is missing or invalid
  *       403:
@@ -25,7 +25,7 @@ router.get('/', authenticateToken, getUrls);
  * @openapi
  * /api/url/{id}:
  *   get:
- *     summary: Get a url by ID
+ *     summary: Get a URL by ID
  *     parameters:
  *       - in: path
  *         name: id
@@ -34,9 +34,9 @@ router.get('/', authenticateToken, getUrls);
  *           type: integer
  *     responses:
  *       200:
- *         description: Url details
+ *         description: URL details
  *       404:
- *         description: Url not found
+ *         description: URL not found
  */
 router.get('/:id', authenticateToken, getUrlById);
 
@@ -44,7 +44,7 @@ router.get('/:id', authenticateToken, getUrlById);
  * @openapi
  * /api/url:
  *   post:
- *     summary: Create a new url
+ *     summary: Create a new URL
  *     requestBody:
  *       required: true
  *       content:
@@ -56,15 +56,21 @@ router.get('/:id', authenticateToken, getUrlById);
  *                 type: string
  *     responses:
  *       201:
- *         description: Url created successfully
+ *         description: URL created successfully
+ *       400:
+ *         description: Invalid URL format
+ *       401:
+ *         description: Unauthorized, token is missing or invalid
+ *       403:
+ *         description: Forbidden, token is invalid or expired
  */
-router.post('/', authenticateTokenGerarUrl , createUrl);
+router.post('/', authenticateTokenGerarUrl, createUrl);
 
 /**
  * @openapi
  * /api/url/{id}:
  *   put:
- *     summary: Update a url by ID
+ *     summary: Update a URL by ID
  *     parameters:
  *       - in: path
  *         name: id
@@ -78,13 +84,19 @@ router.post('/', authenticateTokenGerarUrl , createUrl);
  *           schema:
  *             type: object
  *             properties:
- *               name:
+ *               originalUrl:
  *                 type: string
  *     responses:
  *       200:
- *         description: Url updated successfully
+ *         description: URL updated successfully
+ *       400:
+ *         description: Invalid URL format
  *       404:
- *         description: Url not found
+ *         description: URL not found
+ *       401:
+ *         description: Unauthorized, token is missing or invalid
+ *       403:
+ *         description: Forbidden, token is invalid or expired
  */
 router.put('/:id', authenticateToken, updateUrl);
 
@@ -92,7 +104,7 @@ router.put('/:id', authenticateToken, updateUrl);
  * @openapi
  * /api/url/{id}:
  *   delete:
- *     summary: Delete a url by ID
+ *     summary: Delete a URL by ID
  *     parameters:
  *       - in: path
  *         name: id
@@ -101,10 +113,14 @@ router.put('/:id', authenticateToken, updateUrl);
  *           type: integer
  *     responses:
  *       200:
- *         description: Url deleted successfully
+ *         description: URL deleted successfully
  *       404:
- *         description: Url not found
+ *         description: URL not found
+ *       401:
+ *         description: Unauthorized, token is missing or invalid
+ *       403:
+ *         description: Forbidden, token is invalid or expired
  */
-router.put('/deleted/:id', authenticateToken, deleteUrl);
+router.delete('/:id', authenticateToken, deleteUrl);
 
 export default router;

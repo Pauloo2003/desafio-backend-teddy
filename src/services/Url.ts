@@ -1,58 +1,69 @@
 import validator from 'validator';
 import { UrlRepository } from '../repositories/Url';
-import bcrypt from 'bcrypt';
-const urlRepository = new UrlRepository();
 import moment from 'moment-timezone';
-import {Op} from "sequelize";
-import {shortUrlRedirect} from "../controllers/Url";
-import {Logger} from "sequelize/types/utils/logger";
+import { Op } from "sequelize";
+
 moment.tz.setDefault('America/Sao_Paulo');
-const saltRounds = 10;
 
 const domain = process.env.NODE_ENV === 'production' ? process.env.URL_PRODUCTION : `${process.env.URL_DEV}:${process.env.PORT}`;
+
+const urlRepository = new UrlRepository();
+
 export class UrlService {
     async getUrls(userId: number | null) {
-        return urlRepository.findAll(userId);
+        try {
+            return await urlRepository.findAll(userId);
+        } catch (error) {
+            console.error('Erro ao obter URLs:', error);
+            throw new Error('Erro ao obter URLs');
+        }
     }
 
     async getUrlById(id: number) {
-        const url = await urlRepository.findById(id);
-        if (!url) throw new Error('Url not found');
-        return url;
-    }
-    async shortUrlRedirect(shortUrl: string) {
+        if (isNaN(id)) {
+            throw new Error('ID inválido');
+        }
         try {
-            // Buscar a URL original usando a URL curta
+            const url = await urlRepository.findById(id);
+            if (!url) throw new Error('URL não encontrada');
+            return url;
+        } catch (error) {
+            console.error('Erro ao obter URL por ID:', error);
+            throw new Error('Erro ao obter URL por ID');
+        }
+    }
+
+    async shortUrlRedirect(shortUrl: string) {
+        if (!validator.isAlphanumeric(shortUrl) || shortUrl.length < 6) {
+            throw new Error('URL curta inválida');
+        }
+        try {
             const urlRecord : any = await urlRepository.findOne({ where: { shortUrl } });
 
             if (!urlRecord) {
                 throw new Error('URL não encontrada');
             }
-            // Incrementar o contador de cliques
 
-            const  updatedAt : string = moment().format('YYYY-MM-DD HH:mm:ss');
-            await urlRepository.update(urlRecord[0].id, { clicks: Number(urlRecord[0].clicks + 1) ,updatedAt  });
+            const updatedAt = moment().format('YYYY-MM-DD HH:mm:ss');
+            await urlRepository.updateClicks(urlRecord[0].id, { clicks: urlRecord[0].clicks + 1, updatedAt });
 
-            // Redirecionar para a URL original
-            return (urlRecord[0].originalUrl);
+            return urlRecord[0].originalUrl;
         } catch (error) {
             console.error('Erro ao redirecionar:', error);
             throw new Error('Erro ao redirecionar');
         }
     }
 
-    async createUrl(data: { urlOriginal: string , userId: number | null }) {
-        const { urlOriginal , userId } = data;
-        // Verificar se todos os campos obrigatórios estão presentes
-        if (!urlOriginal) {
-            throw new Error('Informe a url que deseja ser encurtada.');
+    async createUrl(data: { urlOriginal: string; userId: number | null }) {
+        const { urlOriginal, userId } = data;
+        if (!urlOriginal || !validator.isURL(urlOriginal)) {
+            throw new Error('URL inválida');
         }
 
-        const shortUrl: string = await this.generateShortUrl()
+        const shortUrl = await this.generateShortUrl();
+        const createdAt = moment().format('YYYY-MM-DD HH:mm:ss');
+        const updatedAt = createdAt;
 
-        // Data para criação e atualização da url
-        const createdAt : string = moment().format('YYYY-MM-DD HH:mm:ss');
-        const updatedAt : string = moment().format('YYYY-MM-DD HH:mm:ss');
         const payload = {
             originalUrl: urlOriginal,
             shortUrl,
@@ -60,11 +71,17 @@ export class UrlService {
             createdAt,
             updatedAt,
             userId: userId || null,
+        };
+
+        try {
+            await urlRepository.create(payload);
+            return `${domain}/${shortUrl}`;
+        } catch (error) {
+            console.error('Erro ao criar URL:', error);
+            throw new Error('Erro ao criar URL');
         }
-        // Criação do usuário
-        const result = urlRepository.create(payload);
-        return `${domain}/${shortUrl}`;
     }
+
     async generateShortUrl() {
         const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
         let shortUrl = '';
@@ -75,17 +92,37 @@ export class UrlService {
         return shortUrl;
     }
 
-    async updateUrl(id: number, data:  {  name?: string; email?: string , phone?: string , updatedAt: string; }) {
+    async updateUrl(id: number, userId: number | null, data: { originalUrl?: string; updatedAt: string; }) {
+        if (isNaN(id)) {
+            throw new Error('ID inválido');
+        }
+        if (data.originalUrl && !validator.isURL(data.originalUrl)) {
+            throw new Error('URL inválida');
+        }
+
         data.updatedAt = moment().format('YYYY-MM-DD HH:mm:ss');
-        const [updated] = await urlRepository.update(id, data);
-        if (!updated) throw new Error('Url not found');
-        return updated;
+        try {
+            const [updated] = await urlRepository.update(id, userId, data);
+            if (!updated) throw new Error('URL não encontrada');
+            return updated;
+        } catch (error) {
+            console.error('Erro ao atualizar URL:', error);
+            throw new Error('Erro ao atualizar URL');
+        }
     }
 
     async deleteUrl(id: number, userId: number | null) {
+        if (isNaN(id)) {
+            throw new Error('ID inválido');
+        }
         const deletedAt = moment().format('YYYY-MM-DD HH:mm:ss');
-        const deleted = await urlRepository.delete(id,deletedAt,userId);
-        if (!deleted) throw new Error('Url not found');
-        return deleted;
+        try {
+            const deleted = await urlRepository.delete(id, deletedAt, userId);
+            if (!deleted) throw new Error('URL não encontrada');
+            return deleted;
+        } catch (error) {
+            console.error('Erro ao excluir URL:', error);
+            throw new Error('Erro ao excluir URL');
+        }
     }
 }

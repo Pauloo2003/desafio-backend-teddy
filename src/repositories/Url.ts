@@ -3,7 +3,6 @@ import { Op } from 'sequelize';
 
 export class UrlRepository {
     async findAll(userId: number | null) {
-        console.log('userId',userId)
         try {
             return await Url.findAll({
                 where: {
@@ -14,17 +13,17 @@ export class UrlRepository {
                 }
             });
         } catch (error) {
-            console.error('Error fetching all URLs:', error);
-            throw new Error('Error fetching URLs');
+            console.error('Erro ao buscar todas as URLs:', error);
+            throw new Error('Erro ao buscar URLs');
         }
     }
 
     async findOne(filtro: any) {
         try {
-            return await Url.findAll(filtro);
+            return await Url.findOne(filtro);
         } catch (error) {
-            console.error('Error fetching URL with filter:', error);
-            throw new Error('Error fetching URL');
+            console.error('Erro ao buscar URL com filtro:', error);
+            throw new Error('Erro ao buscar URL');
         }
     }
 
@@ -32,34 +31,55 @@ export class UrlRepository {
         try {
             const url = await Url.findByPk(id);
             if (!url) {
-                throw new Error('URL not found');
+                throw new Error('URL não encontrada');
             }
             return url;
         } catch (error) {
-            console.error(`Error fetching URL with ID ${id}:`, error);
-            throw new Error('Error fetching URL');
+            console.error(`Erro ao buscar URL com ID ${id}:`, error);
+            throw new Error('Erro ao buscar URL');
         }
     }
 
-    async create(data: { originalUrl: string; shortUrl: string; clicks: number , createdAt: string , updatedAt: string }) {
+    async create(data: { originalUrl: string; shortUrl: string; clicks: number; createdAt: string; updatedAt: string }) {
         try {
             return await Url.create(data);
         } catch (error) {
-            console.error('Error creating URL:', error);
-            throw new Error('Error creating URL');
+            console.error('Erro ao criar URL:', error);
+            throw new Error('Erro ao criar URL');
         }
     }
 
-    async update(id: number, data: { originalUrl?: string; clicks?: number , updatedAt: string }) {
+    async update(id: number, userId: number | null, data: { originalUrl?: string; clicks?: number; updatedAt: string }) {
         try {
+            const urlExists = await Url.findOne({ where: { id } });
+            if (!urlExists) {
+                throw new Error('URL não encontrada');
+            }
+            const urlEnable = await Url.findOne({ where: { id, userId } });
+            if (!urlEnable) {
+                throw new Error('URL não pertence ao usuário, portanto não pode ser editada');
+            }
             const result = await Url.update(data, { where: { id } });
             if (result[0] === 0) {
-                throw new Error('URL not found or no changes made');
+                throw new Error('Ocorreu um erro ao atualizar a URL');
             }
             return result;
         } catch (error) {
-            console.error(`Error updating URL with ID ${id}:`, error);
-            throw new Error('Error updating URL');
+            console.error(`Erro ao atualizar URL com ID ${id}:`, error);
+            throw new Error('Erro ao atualizar URL');
+        }
+    }
+
+    async updateClicks(id: number, data: { clicks?: number; updatedAt: string }) {
+        try {
+            const result = await Url.update(data, { where: { id } });
+            if (result[0] === 0) {
+                throw new Error('Ocorreu um erro ao atualizar a URL');
+            }
+            return result;
+        } catch (error) {
+            console.error(`Erro ao atualizar cliques da URL com ID ${id}:`, error);
+            throw new Error('Erro ao atualizar URL');
         }
     }
 
@@ -67,22 +87,23 @@ export class UrlRepository {
         try {
             const urlExists = await Url.findOne({ where: { id } });
             if (!urlExists) {
-                throw new Error('URL not found');
+                throw new Error('URL não encontrada');
             }
-
+            const urlEnable = await Url.findOne({ where: { id, userId: deletedBy } });
+            if (!urlEnable) {
+                throw new Error('URL não pertence ao usuário, portanto não pode ser excluída');
+            }
             const result = await Url.update(
                 { deletedAt, deletedBy },
                 { where: { id } }
             );
-
             if (result[0] === 0) {
-                throw new Error('Failed to delete URL');
+                throw new Error('Falha ao excluir URL');
             }
-
             return result;
         } catch (error) {
-            console.error(`Error deleting URL with ID ${id}:`, error);
-            throw new Error('Error deleting URL');
+            console.error(`Erro ao excluir URL com ID ${id}:`, error);
+            throw new Error('Erro ao excluir URL');
         }
     }
 }

@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { loginUser, refreshTokenService } from '../services/authService';
+import { loginUser, refreshTokenService } from '../services/Auth';
 
 // Login
 export const loginUserController = async (req: Request, res: Response) => {

@@ -1,26 +1,28 @@
 import { Router } from 'express';
 import { shortUrlRedirect } from '../controllers/Url';
-import {authenticateToken} from '../middleware/authMiddleware';
+import { authenticateToken } from '../middleware/authMiddleware';
 
 const router = Router();
 
 /**
  * @openapi
- * /api/url:
+ * /{shortUrl}:
  *   get:
- *     summary: Get all url
- *     security:
- *       - bearerAuth: []
+ *     summary: Redirect a short URL to its original URL
+ *     parameters:
+ *       - in: path
+ *         name: shortUrl
+ *         required: true
+ *         schema:
+ *           type: string
  *     responses:
- *       200:
- *         description: A list of url
- *       401:
- *         description: Unauthorized, token is missing or invalid
- *       403:
- *         description: Forbidden, token is invalid or expired
+ *       302:
+ *         description: Redirects to the original URL
+ *       400:
+ *         description: Invalid short URL
+ *       404:
+ *         description: Short URL not found
  */
 router.get('/:shortUrl', shortUrlRedirect);
-
-
 
 export default router;

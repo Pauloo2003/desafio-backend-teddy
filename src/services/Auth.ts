@@ -1,9 +1,9 @@
 import jwt from 'jsonwebtoken';
-import {UserRepository} from '../repositories/userRepository';
+import {Users} from '../repositories/User';
 import { jwtConfig } from '../config/jwtConfig';
 import bcrypt from 'bcrypt';
 import {logger} from "sequelize/types/utils/logger";
-const userRepository = new UserRepository();
+const userRepository = new Users();
 const generateTokens = (userId: number) => {
     const accessToken = jwt.sign({ userId}, jwtConfig.secret, { expiresIn: jwtConfig.expiresIn });
     const refreshToken = jwt.sign({ userId }, jwtConfig.refreshTokenSecret, { expiresIn: jwtConfig.refreshTokenExpiresIn });

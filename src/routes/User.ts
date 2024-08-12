@@ -1,6 +1,6 @@
 import { Router } from 'express';
-import { getUsers, getUserById, createUser, updateUser, deleteUser } from '../controllers/userController';
-import {authenticateToken} from '../middleware/authMiddleware';
+import { getUsers, getUserById, createUser, updateUser, deleteUser } from '../controllers/User';
+import { authenticateToken } from '../middleware/authMiddleware';
 
 const router = Router();
 
@@ -59,6 +59,8 @@ router.get('/:id', authenticateToken, getUserById);
  *     responses:
  *       201:
  *         description: User created successfully
+ *       400:
+ *         description: Invalid input data
  */
 router.post('/', createUser);
 
@@ -87,6 +89,8 @@ router.post('/', createUser);
  *     responses:
  *       200:
  *         description: User updated successfully
+ *       400:
+ *         description: Invalid input data
  *       404:
  *         description: User not found
  */
@@ -109,6 +113,6 @@ router.put('/:id', authenticateToken, updateUser);
  *       404:
  *         description: User not found
  */
-router.put('/deleted/:id', authenticateToken, deleteUser);
+router.put('/:id', authenticateToken, deleteUser);
 
 export default router;

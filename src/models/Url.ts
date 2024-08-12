@@ -31,7 +31,7 @@ Url.init(
             unique: true,
         },
         userId: {
-            type: DataTypes.INTEGER,
+            type: DataTypes.INTEGER.UNSIGNED,
             allowNull: true,
             references: {
                 model: User,

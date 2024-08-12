@@ -66,9 +66,7 @@ export const authenticateToken = (req: Request, res: Response, next: NextFunctio
 export const authenticateTokenGerarUrl = (req: Request, res: Response, next: NextFunction) => {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
-    console.log('VALIDAÇÃO IF',!token || token !== 'null' || token !== undefined)
-    if(!token && token !== null && token !== undefined){
-        console.log('TOKEN',token)
+    if(token !== null && token !== undefined){
         try {
             const tokenParts = token.split('.');
             if (tokenParts.length !== 3) {

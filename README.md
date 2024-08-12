@@ -5,7 +5,12 @@ API REST desenvolvida em Node.js com a funcionalidade principal de encurtamento 
 
 ## Tecnologias
 
-- Node.js v20.16.0
+- Node.js v20.16.0 LTS (VERSAO UTILIZADA E RECOMENDADA)
+- Sequelize ORM
+- MySQL
+- Express
+- TypeScript
+
 
 ## Instalação
 
@@ -43,6 +48,9 @@ Crie um arquivo .env na raiz do projeto com base no arquivo de exemplo fornecido
 
 - Substitua `<URL_DO_REPOSITÓRIO>` pela URL real do seu repositório Git.
 - Certifique-se de que todos os comandos e detalhes estejam corretos e ajustados conforme sua configuração específica.
+- Certifique-se sobre a versao do node utilizada.
+- Certifique-se de que as configurações MySQL esteja correta.
+- Link do ambiente de producao: (https://desafio-backend.up.railway.app/)
 - Se você estiver usando o Yarn, substitua `npm` por `yarn` nos comandos acima.
 
 
