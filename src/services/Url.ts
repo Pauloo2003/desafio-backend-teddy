@@ -8,6 +8,8 @@ import {shortUrlRedirect} from "../controllers/Url";
 import {Logger} from "sequelize/types/utils/logger";
 moment.tz.setDefault('America/Sao_Paulo');
 const saltRounds = 10;
+
+const domain = process.env.NODE_ENV === 'production' ? process.env.URL_PRODUCTION : `${process.env.URL_DEV}:${process.env.PORT}`;
 export class UrlService {
     async getUrls(userId: number | null) {
         return urlRepository.findAll(userId);
@@ -61,8 +63,6 @@ export class UrlService {
         }
         // Criação do usuário
         const result = urlRepository.create(payload);
-        console.log('result criacao de url', result)
-        const domain = 'http://localhost:3000'; // Aqui você pode configurar o domínio dinamicamente
         return `${domain}/${shortUrl}`;
     }
     async generateShortUrl() {
