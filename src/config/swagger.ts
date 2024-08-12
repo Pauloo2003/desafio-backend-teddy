@@ -9,7 +9,7 @@ const swaggerSpec = swaggerJsdoc({
         info: {
             title: 'Sistema Encurtador de URL',
             version: '1.0.0',
-            description: 'API Documentation for Node.js API built with TypeScript',
+            description: 'Documentação da API para o sistema de encurtamento de URLs, desenvolvido com Node.js e TypeScript',
         },
         components: {
             securitySchemes: {
@@ -17,19 +17,10 @@ const swaggerSpec = swaggerJsdoc({
                     type: 'http',
                     scheme: 'bearer',
                     bearerFormat: 'JWT',
-                    description: 'Enter JWT token with Bearer prefix',
+                    description: 'Insira o token JWT gerado no login',
                 },
             },
         },
-        servers: [
-            { url: `https://desafio-backend.up.railway.app`, description: 'Server Produção' },
-            { url: `${process.env.URL_DEV}:${process.env.PORT}`, description: 'Server Local' },
-        ],
-        security: [
-            {
-                bearerAuth: [],
-            },
-        ],
     },
     apis: ['./src/routes/*.ts', './src/controllers/*.ts'],
 });

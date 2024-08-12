@@ -8,7 +8,9 @@ const router = Router();
  * @openapi
  * /{shortUrl}:
  *   get:
- *     summary: Redirect a short URL to its original URL
+ *     summary: Recebe uma URL encurtada e redireciona para a URL original
+ *     tags:
+ *     - URL Encurtada
  *     parameters:
  *       - in: path
  *         name: shortUrl

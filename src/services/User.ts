@@ -3,6 +3,7 @@ import { Users } from '../repositories/User';
 import bcrypt from 'bcrypt';
 import moment from 'moment-timezone';
 import { Op } from 'sequelize';
+import logger from '../utils/logger';
 
 const userRepository = new Users();
 moment.tz.setDefault('America/Sao_Paulo');
@@ -11,8 +12,11 @@ const saltRounds = 10;
 export class User {
     async getUsers() {
         try {
-            return await userRepository.findAll();
-        } catch (error) {
+            const users = await userRepository.findAll();
+            logger.info('Usuários recuperados com sucesso.');
+            return users;
+        } catch (error : any) {
+            logger.error(`Erro ao buscar usuários: ${error.message}`);
             throw new Error('Erro ao buscar usuários');
         }
     }
@@ -20,9 +24,14 @@ export class User {
     async getUserById(id: number) {
         try {
             const user = await userRepository.findById(id);
-            if (!user) throw new Error('Usuário não encontrado');
+            if (!user) {
+                logger.warn(`Usuário com ID ${id} não encontrado.`);
+                throw new Error('Usuário não encontrado');
+            }
+            logger.info(`Usuário com ID ${id} recuperado com sucesso.`);
             return user;
-        } catch (error) {
+        } catch (error : any) {
+            logger.error(`Erro ao buscar usuário por ID ${id}: ${error.message}`);
             throw new Error('Erro ao buscar usuário por ID');
         }
     }
@@ -32,23 +41,29 @@ export class User {
 
         // Verificar se todos os campos obrigatórios estão presentes
         if (!name) {
+            logger.warn('O campo nome é obrigatório.');
             throw new Error('O campo nome é obrigatório.');
         }
 
         if (!email) {
+            logger.warn('O campo e-mail é obrigatório.');
             throw new Error('O campo e-mail é obrigatório.');
         }
 
         if (!password) {
+            logger.warn('O campo senha é obrigatório.');
             throw new Error('O campo senha é obrigatório.');
         }
 
         if (!phone) {
+            logger.warn('O campo telefone é obrigatório.');
             throw new Error('O campo telefone é obrigatório.');
         }
 
         // Validar o formato do email
+
         if (!validator.isEmail(email)) {
+            logger.warn('E-mail inválido');
             throw new Error('E-mail inválido');
         }
 
@@ -63,19 +78,17 @@ export class User {
         });
 
         if (existingUser.length > 0) {
+            logger.warn('O e-mail já está em uso');
             throw new Error('O e-mail já está em uso');
         }
 
-        // Hash da senha
         const hashedPassword = await bcrypt.hash(password, saltRounds);
 
-        // Dados para criação do usuário
         const createdAt = moment().format('YYYY-MM-DD HH:mm:ss');
         const updatedAt = moment().format('YYYY-MM-DD HH:mm:ss');
 
-        // Criação do usuário
         try {
-            return await userRepository.create({
+            const newUser = await userRepository.create({
                 name,
                 email,
                 password: hashedPassword,
@@ -83,7 +96,10 @@ export class User {
                 createdAt,
                 updatedAt
             });
-        } catch (error) {
+            logger.info(`Novo usuário criado com ID ${newUser.id}`);
+            return newUser;
+        } catch (error : any) {
+            logger.error(`Erro ao criar usuário: ${error.message}`);
             throw new Error('Erro ao criar usuário');
         }
     }
@@ -93,10 +109,15 @@ export class User {
 
         try {
             // @ts-ignore
-            const [updated] = await userRepository.update(id, data);
-            if (!updated) throw new Error('Usuário não encontrado');
+            const updated = await userRepository.update(id, data);
+            if (!updated) {
+                logger.warn(`Usuário com ID ${id} não encontrado.`);
+                throw new Error('Usuário não encontrado');
+            }
+            logger.info(`Usuário com ID ${id} atualizado com sucesso.`);
             return updated;
-        } catch (error) {
+        } catch (error : any) {
+            logger.error(`Erro ao atualizar usuário com ID ${id}: ${error.message}`);
             throw new Error('Erro ao atualizar usuário');
         }
     }
@@ -106,9 +127,14 @@ export class User {
 
         try {
             const deleted = await userRepository.delete(id, deletedAt, userId);
-            if (!deleted) throw new Error('Usuário não encontrado');
+            if (!deleted) {
+                logger.warn(`Usuário com ID ${id} não encontrado.`);
+                throw new Error('Usuário não encontrado');
+            }
+            logger.info(`Usuário com ID ${id} deletado com sucesso.`);
             return deleted;
-        } catch (error) {
+        } catch (error : any) {
+            logger.error(`Erro ao deletar usuário com ID ${id}: ${error.message}`);
             throw new Error('Erro ao deletar usuário');
         }
     }

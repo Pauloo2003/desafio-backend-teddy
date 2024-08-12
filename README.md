@@ -10,6 +10,8 @@ API REST desenvolvida em Node.js com a funcionalidade principal de encurtamento 
 - MySQL
 - Express
 - TypeScript
+- Swagger
+- Winston Logger
 
 
 ## Instalação

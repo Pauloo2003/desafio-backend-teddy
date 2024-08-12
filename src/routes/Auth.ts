@@ -1,5 +1,6 @@
-import { Router } from 'express';
+import { Router, Request, Response, NextFunction } from 'express';
 import { loginUserController, refreshTokenController } from '../controllers/Auth';
+import logger from '../utils/logger';  // Importando o logger
 
 const router = Router();
 
@@ -7,7 +8,9 @@ const router = Router();
  * @openapi
  * /api/auth/login:
  *   post:
- *     summary: Log in a user
+ *     summary: Login
+ *     tags:
+ *       - Autenticação
  *     requestBody:
  *       required: true
  *       content:
@@ -21,17 +24,31 @@ const router = Router();
  *                 type: string
  *     responses:
  *       200:
- *         description: Login successful
+ *         description: Logado com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 accessToken:
+ *                   type: string
+ *                   description: Token de acesso (JWT)
+ *                 refreshToken:
+ *                   type: string
+ *                   description: Token de atualização
  *       401:
- *         description: Invalid credentials
+ *         description: Credenciais inválidas
  */
+
 router.post('/login', loginUserController);
 
 /**
  * @openapi
  * /api/auth/refresh-token:
  *   post:
- *     summary: Refresh an access token
+ *     summary: Refresh token
+ *     tags:
+ *     - Autenticação
  *     requestBody:
  *       required: true
  *       content:

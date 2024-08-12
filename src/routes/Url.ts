@@ -8,16 +8,18 @@ const router = Router();
  * @openapi
  * /api/url:
  *   get:
- *     summary: Get all URLs
+ *     summary: Obter todas as URLs do usuário logado
+ *     tags:
+ *      - URL
  *     security:
  *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: A list of URLs
+ *         description: Lista de URLs
  *       401:
- *         description: Unauthorized, token is missing or invalid
+ *         description: Não autorizado, token está faltando ou inválido
  *       403:
- *         description: Forbidden, token is invalid or expired
+ *         description: Proibido, token está inválido ou expirado
  */
 router.get('/', authenticateToken, getUrls);
 
@@ -25,7 +27,11 @@ router.get('/', authenticateToken, getUrls);
  * @openapi
  * /api/url/{id}:
  *   get:
- *     summary: Get a URL by ID
+ *     summary: Obter uma URL pelo ID
+ *     tags:
+ *     - URL
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -34,9 +40,9 @@ router.get('/', authenticateToken, getUrls);
  *           type: integer
  *     responses:
  *       200:
- *         description: URL details
+ *         description: Detalhes da URL
  *       404:
- *         description: URL not found
+ *         description: URL não encontrada
  */
 router.get('/:id', authenticateToken, getUrlById);
 
@@ -44,7 +50,11 @@ router.get('/:id', authenticateToken, getUrlById);
  * @openapi
  * /api/url:
  *   post:
- *     summary: Create a new URL
+ *     summary: Criar uma nova URL
+ *     tags:
+ *     - URL
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -56,21 +66,25 @@ router.get('/:id', authenticateToken, getUrlById);
  *                 type: string
  *     responses:
  *       201:
- *         description: URL created successfully
+ *         description: URL criada com sucesso
  *       400:
- *         description: Invalid URL format
+ *         description: Formato de URL inválido
  *       401:
- *         description: Unauthorized, token is missing or invalid
+ *         description: Não autorizado, token está faltando ou inválido
  *       403:
- *         description: Forbidden, token is invalid or expired
+ *         description: Proibido, token está inválido ou expirado
  */
-router.post('/', authenticateTokenGerarUrl, createUrl);
+router.post('/', authenticateTokenGerarUrl , createUrl);  // ELA PODE SER ACESSADA POR QUALQQUER UM, POREM TABEM PODE SER ACESSADA POR UM USUARIO AUTENTICADO
 
 /**
  * @openapi
  * /api/url/{id}:
  *   put:
- *     summary: Update a URL by ID
+ *     summary: Atualizar uma URL pelo ID
+ *     tags:
+ *     - URL
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -88,15 +102,15 @@ router.post('/', authenticateTokenGerarUrl, createUrl);
  *                 type: string
  *     responses:
  *       200:
- *         description: URL updated successfully
+ *         description: URL atualizada com sucesso
  *       400:
- *         description: Invalid URL format
+ *         description: Formato de URL inválido
  *       404:
- *         description: URL not found
+ *         description: URL não encontrada
  *       401:
- *         description: Unauthorized, token is missing or invalid
+ *         description: Não autorizado, token está faltando ou inválido
  *       403:
- *         description: Forbidden, token is invalid or expired
+ *         description: Proibido, token está inválido ou expirado
  */
 router.put('/:id', authenticateToken, updateUrl);
 
@@ -104,7 +118,11 @@ router.put('/:id', authenticateToken, updateUrl);
  * @openapi
  * /api/url/{id}:
  *   delete:
- *     summary: Delete a URL by ID
+ *     summary: Deletar uma URL pelo ID
+ *     tags:
+ *     - URL
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -113,13 +131,13 @@ router.put('/:id', authenticateToken, updateUrl);
  *           type: integer
  *     responses:
  *       200:
- *         description: URL deleted successfully
+ *         description: URL deletada com sucesso
  *       404:
- *         description: URL not found
+ *         description: URL não encontrada
  *       401:
- *         description: Unauthorized, token is missing or invalid
+ *         description: Não autorizado, token está faltando ou inválido
  *       403:
- *         description: Forbidden, token is invalid or expired
+ *         description: Proibido, token está inválido ou expirado
  */
 router.delete('/:id', authenticateToken, deleteUrl);
 
