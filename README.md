@@ -19,20 +19,28 @@ API REST desenvolvida em Node.js com a funcionalidade principal de encurtamento 
    ```bash
    git clone <URL_DO_REPOSITÓRIO>
    cd desafio-backend-teddy
+   
 
-2. Instale as dependências:
+2. Verifique se você possui o Node.js instalado e a versao correta v20.16.0 LTS:
+
+   ```bash
+   node -v
+
+  Se necessário, instale a versão recomendada do Node.js a partir do site oficial: [Node.js Downloads](https://nodejs.org/pt).
+
+3. Instale as dependências:
 
    ```bash
    npm install
 
-3. Configure o arquivo .env:
+4. Configure o arquivo .env:
 
    Crie um arquivo .env na raiz do projeto com base no arquivo de exemplo fornecido (.env.example). Copie o conteúdo do .env.example para um novo arquivo .env e substitua os valores de exemplo pelas suas configurações reais:
 
     ```bash
     cp .env.example .env
 
-4. Inicie o servidor:
+5. Inicie o servidor:
 
    ```bash
    npm run dev
