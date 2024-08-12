@@ -7,7 +7,15 @@ interface DecodedToken {
     userId: string;
     exp: number;
 }
-
+declare global {
+    namespace Express {
+        interface Request {
+            user?: {
+                userId: number | null;
+            };
+        }
+    }
+}
 export const verifyRefreshToken = (req: Request, res: Response, next: NextFunction) => {
     const { refreshToken } = req.body;
 
@@ -44,7 +52,9 @@ export const authenticateToken = (req: Request, res: Response, next: NextFunctio
             return res.status(403).json({ msg: "Token expirado!" });
         }
 
+
         req.user  = {
+            // @ts-ignore
             userId: decoded.userId,
         };
 
@@ -72,7 +82,9 @@ export const authenticateTokenGerarUrl = (req: Request, res: Response, next: Nex
                 return res.status(403).json({msg: "Token expirado!"});
             }
 
+
             req.user = {
+                // @ts-ignore
                 userId: decoded.userId,
             };
 
