@@ -18,7 +18,9 @@ app.use('/api/auth', authRoutes);
 app.use('/api/url', urlRoutes);
 app.use('/', urlEncurtadaRoutes);
 
-
+app.get('/', (req, res) => {
+    res.redirect('/api/api-docs');
+});
 // Configuração do Swagger
 setupSwagger(app);
 

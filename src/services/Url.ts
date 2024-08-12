@@ -28,7 +28,6 @@ export class UrlService {
             }
             // Incrementar o contador de cliques
 
-            console.log('urlRecord[0]',urlRecord[0])
             const  updatedAt : string = moment().format('YYYY-MM-DD HH:mm:ss');
             await urlRepository.update(urlRecord[0].id, { clicks: Number(urlRecord[0].clicks + 1) ,updatedAt  });
 
