@@ -7,7 +7,7 @@ const swaggerSpec = swaggerJsdoc({
     definition: {
         openapi: '3.0.0',
         info: {
-            title: 'Node API TypeScript',
+            title: 'Sistema Encurtador de URL',
             version: '1.0.0',
             description: 'API Documentation for Node.js API built with TypeScript',
         },
@@ -21,6 +21,10 @@ const swaggerSpec = swaggerJsdoc({
                 },
             },
         },
+        servers: [
+            { url: `${process.env.URL_DEV}:${process.env.PORT}`, description: 'Server Local' },
+            { url: `https://desafio-backend.up.railway.app`, description: 'Server Produção' }
+        ],
         security: [
             {
                 bearerAuth: [],
